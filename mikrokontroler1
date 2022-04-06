@@ -1,0 +1,121 @@
+#include <p24fj128ga010.h>
+
+//Konfiguracja dla Explorer 16 z progr. icd2
+_CONFIG1(JTAGEN_OFF & GCP_OFF & GWRP_OFF & BKBUG_OFF & COE_OFF & FWDTEN_OFF)
+_CONFIG2(FCKSM_CSDCMD & OSCIOFNC_ON & POSCMOD_HS & FNOSC_PRI)
+
+#define SCALE 308L
+
+int main(void){
+unsigned long i;
+unsigned int zadanie=1;
+unsigned char display=0;
+unsigned int x=0;
+unsigned int y=7;
+unsigned int snake=0;
+unsigned int k=0;
+unsigned int J=0;
+unsigned int D=0;
+unsigned int licznik=0;
+
+//inicjalizacja
+ PORTA=0x0000;
+ TRISA=0xFF00;
+ TRISD=0xFFFF;
+  
+again:
+	Nop();
+	PORTA=(unsigned int) display;
+	for(i=500L*SCALE;i>0;i--) Nop();
+
+	if (PORTDbits.RD13 == 0){
+		if(zadanie==9)
+			zadanie=1;
+		else
+			zadanie=zadanie+1;
+	}
+	else if (PORTDbits.RD6==0)
+	{
+		if(zadanie==1)
+			zadanie=9;
+		else
+			zadanie=zadanie-1;
+	}
+	switch (zadanie){
+	
+	case 1:
+		display=display+1;
+		break;
+
+	case 2:
+		display=display-1;
+		break;
+
+	case 3:
+		display=x^(x>>1);
+		x++;
+		break;
+
+	case 4:
+		display=x^(x>>1);
+		x--;
+		if(x==0)
+			x=255;
+		else
+			x--;
+		break;
+
+	case 5:
+		if(licznik == 99)
+		{
+			licznik=0;
+		}else{
+			licznik++;
+		}
+		D=licznik/10;
+		J=licznik%10;
+		display=J+(D*16);
+		break;
+
+	case 6:
+		if(licznik == 0)
+		{
+			licznik=99;
+		}else{
+			licznik--;
+		}
+		D=licznik/10;
+		J=licznik%10;
+		display=J+(D*16);	
+		break;
+
+	case 7:
+		display=y;
+			if(snake==0)
+			{
+				y=y*2;
+				if(y=448)
+				{
+					snake=1;
+				}
+			}
+			if(snake==1)
+			{
+				y=y/2;
+				if(y==7)
+				{
+					snake=0;
+				}
+			}
+		break;
+
+	case 8:
+		display=k;
+		k=k^2;
+		break;
+	
+	case 9:
+		break;
+	}
+	goto again;
+}
