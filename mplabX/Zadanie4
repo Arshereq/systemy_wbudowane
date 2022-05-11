@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <string.h>
 // CONFIG1H
 #pragma config OSC = HSPLL      // Oscillator Selection bits (HS oscillator, PLL enabled (Clock Frequency = 4 x FOSC1))
 #pragma config FCMEN = OFF      // Fail-Safe Clock Monitor Enable bit (Fail-Safe Clock Monitor disabled)
@@ -175,50 +177,144 @@ void main(void) {
     
     lcd_init(); //Inicjalizacja wy?wietlacza
     lcd_cmd(L_CLR); //Czyszczenie wy?wietlacza
-    
-    int sekundy = 0;
-    int minuty = 0;
-    
-    int moc_tryb = 1;
-    char moc[10] = "Moc: 000W";
-    
+   unsigned int time;
+   unsigned char tim[3]="0";
+   typedef enum { F, T } boolean;
+   unsigned char Power[4];
+   unsigned char sec[2]="0";
+   unsigned char min[3]="0";    
+   boolean start=F;
+  // { "800W", "600W" , "350W" , "200W"}
+    strcpy(Power,"200W");
+
+    lcd_cmd(L_L1); //Przej??ie do drugiej linii
+    lcd_str("Moc:        "); //napis
+    lcd_str(Power); //napis
+    lcd_cmd(L_L2); //Ustawienie karetki w pierwszej linii
+    lcd_str("Czas:      "); //napis
+    lcd_str(min); //napis
+    lcd_str(":");
+    lcd_str("0"); //napis
+
     while(1)
     {
-        switch (moc_tryb){
-            case 1: 
-                moc[5] = '2';
-                break;
-            case 2:
-                moc[5] = '3';
-                moc[6] = '5';
-                break;
-            case 3:
-                moc[5] = '6';
-                moc[6] = '0';
-                break;
-            case 4:
-                moc[5] = '8';
-                break;
-            default:
-                moc[5] = '0';
-                moc[6] = '0';
-        }
-            
-        if(PORTBbits.RB5 == 0){
-            if(moc_tryb > 4){
-                moc_tryb = 1;
-            }
-            else{
-                moc_tryb++;
-            }
-        }
-        delay(1000);
-        lcd_cmd(L_CLR);
-        lcd_cmd(L_L1); //Ustawienie karetki w pierwszej linii
-        lcd_str(moc);
-        lcd_cmd(L_L2); //Ustawienie karetki w drugiej linii
-        lcd_str("Czas: "); //napis
         
+       sprintf(min, "%d", time/60);
+       sprintf(sec, "%d", time%60);
+       if(PORTBbits.RB1 == 0)
+       {
+           delay(100);
+           if(start==F)
+           {
+               start=T;
+           }
+           else
+           {
+               start=F;
+           }
+       }
+       
+       if(PORTBbits.RB2 == 0)
+       {
+           time=0;
+
+        
+        lcd_cmd(L_L1); //Przej??ie do drugiej linii
+        lcd_str("Moc:        "); //napis
+        lcd_str(Power); //napis
+        lcd_cmd(L_L2); //Ustawienie karetki w pierwszej linii
+        lcd_str("Czas:      "); //napis
+        lcd_str("0"); //napis
+        lcd_str(":");
+        lcd_str("00"); //napis
+        lcd_str("   ");   
+       }  
+       
+       if(PORTBbits.RB3 == 0)
+       {
+        delay(100);
+        time+=10;
+
+        lcd_cmd(L_L1); //Przej??ie do drugiej linii
+        lcd_str("Moc:        "); //napis
+        lcd_str(Power); //napis
+        lcd_cmd(L_L2); //Ustawienie karetki w pierwszej linii
+        lcd_str("Czas:      "); //napis
+        lcd_str(min); //napis
+        lcd_str(":");
+        lcd_str(sec); //napis
+        lcd_str("   ");   
+      
+       }
+       
+       if(PORTBbits.RB4 == 0)
+       {
+        delay(100);
+        time+=60;
+
+        
+        lcd_cmd(L_L1); //Przej??ie do drugiej linii
+        lcd_str("Moc:        "); //napis
+        lcd_str(Power); //napis
+        lcd_cmd(L_L2); //Ustawienie karetki w pierwszej linii
+        lcd_str("Czas:      "); //napis
+        lcd_str(min); //napis
+        lcd_str(":");
+        lcd_str(sec); //napis
+        lcd_str("   ");
+
+       }
+       if(PORTBbits.RB5 == 0)
+       {
+           delay(100);
+        if(strcmp(Power, "200W") == 0)
+        {
+        strcpy(Power,"350W");
+      
+        }
+        else if(strcmp(Power, "350W") == 0)
+        {
+         strcpy(Power,"600W");
+        }
+        else if(strcmp(Power, "600W") == 0)
+        {
+        strcpy(Power,"800W");
+
+        }
+        else
+        {
+        strcpy(Power,"200W");
+        }
+        lcd_cmd(L_L1); //Przej??ie do drugiej linii
+        lcd_str("Moc:        "); //napis
+        lcd_str(Power); //napis
+        lcd_cmd(L_L2); //Ustawienie karetki w pierwszej linii
+        lcd_str("Czas:      "); //napis
+        lcd_str(min); //napis
+        lcd_str(":");
+        lcd_str(sec); //napis 
+        lcd_str("   ");        
+       }
+
+        if(start==T){
+            delay(100);
+            if(time!=0)
+            {
+                time-=1;
+            }
+            
+         lcd_cmd(L_L1); //Przej??ie do drugiej linii
+        lcd_str("Moc:        "); //napis
+        lcd_str(Power); //napis
+        lcd_cmd(L_L2); //Ustawienie karetki w pierwszej linii
+        lcd_str("Czas:      "); //napis
+        lcd_str(min); //napis
+        lcd_str(":");
+        lcd_str(sec); //napis
+        lcd_str("   ");
+  
+        }
+
     }
     
     return;
