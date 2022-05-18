@@ -186,22 +186,37 @@ void main(void) {
        delay(1000);
        lcd_cmd(L_CLR);
        lcd_cmd(L_L1); //Przej??ie do drugiej linii
-       lcd_str("TYLKO U NAS");
+       lcd_str("TYLKO");
+       lcd_cmd(L_L2);
+       lcd_str("      U NAS");
        
        delay(1000);
        lcd_cmd(L_CLR);
        lcd_cmd(L_L1);
-       lcd_str("Codziennie");
+       lcd_str("Codzie");
+       lcd_cmd(L_L2);
+       lcd_str("      nnie");
        
        delay(1000);
        lcd_cmd(L_CLR);
        lcd_cmd(L_L1);
-       lcd_str("Niskie ceny");
+       lcd_str("Niskie");
+       lcd_cmd(L_L2);
+       lcd_str("       CENY");
        
        delay(1000);
        lcd_cmd(L_CLR);
        lcd_cmd(L_L1);
-       lcd_str("W media expert!!");
+       lcd_str("       W       ");
+       lcd_cmd(L_L2);
+       lcd_str("Media    Expert");
+       
+       delay(1000);
+       lcd_cmd(L_CLR);
+       lcd_cmd(L_L1);
+       lcd_str("     _ _     ___");
+       lcd_cmd(L_L2);
+       lcd_str("____(_oo_)_()__/");
         
     }
     
