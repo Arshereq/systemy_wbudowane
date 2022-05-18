@@ -181,11 +181,6 @@ void main(void) {
        delay(1000);
        lcd_cmd(L_CLR);
        lcd_cmd(L_L1); //Ustawienie karetki w pierwszej linii
-       lcd_str("Siema studenty  "); //napis
-       
-       delay(1000);
-       lcd_cmd(L_CLR);
-       lcd_cmd(L_L1); //Ustawienie karetki w pierwszej linii
        lcd_str("Reklama!"); //napis
        
        delay(1000);
