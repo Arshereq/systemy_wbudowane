@@ -175,8 +175,8 @@ void main(void) {
     TRISD=0x00;
     TRISE=0x00;
     
-    lcd_init(); //Inicjalizacja wy?wietlacza
-    lcd_cmd(L_CLR); //Czyszczenie wy?wietlacza
+    lcd_init(); //Inicjalizacja wyswietlacza
+    lcd_cmd(L_CLR); //Czyszczenie wyswietlacza
    unsigned int time;
    unsigned char tim[3]="0";
    typedef enum { F, T } boolean;
@@ -185,12 +185,12 @@ void main(void) {
    unsigned char min[3]="0";    
    boolean start=F;
   // { "800W", "600W" , "350W" , "200W"}
-    strcpy(Power,"200W");
+    strcpy(Power,"200W"); // zaczynamy z moca 200W
 
-    lcd_cmd(L_L1); //Przej??ie do drugiej linii
+    lcd_cmd(L_L1); //Przejscie do pierwszej linii
     lcd_str("Moc:        "); //napis
     lcd_str(Power); //napis
-    lcd_cmd(L_L2); //Ustawienie karetki w pierwszej linii
+    lcd_cmd(L_L2); //Przejscie do drugiej linii
     lcd_str("Czas:      "); //napis
     lcd_str(min); //napis
     lcd_str(":");
@@ -199,30 +199,30 @@ void main(void) {
     while(1)
     {
         
-       sprintf(min, "%d", time/60);
-       sprintf(sec, "%d", time%60);
-       if(PORTBbits.RB1 == 0)
+       sprintf(min, "%d", time/60); // napis z minutami 
+       sprintf(sec, "%d", time%60); // napisz z sekundami
+       if(PORTBbits.RB1 == 0) // jesli rb1 klikniemy
        {
-           delay(100);
-           if(start==F)
+           delay(100); // opoznienie na 100
+           if(start==F) // jesli zmienna "start" jest rowna wartosci zmiennej "F"
            {
-               start=T;
+               start=T; // to do zmiennej "start" przypisz zmienna "T"
            }
-           else
+           else // lub
            {
-               start=F;
+               start=F; // do zmiennej "start" przypisz zmienna "F"
            }
        }
        
-       if(PORTBbits.RB2 == 0)
+       if(PORTBbits.RB2 == 0) // jesli wcisniemy rb2 
        {
-           time=0;
+           time=0; // czas ustaw na 0 
 
         
-        lcd_cmd(L_L1); //Przej??ie do drugiej linii
+        lcd_cmd(L_L1); //Przejscie do pierwszej linii
         lcd_str("Moc:        "); //napis
         lcd_str(Power); //napis
-        lcd_cmd(L_L2); //Ustawienie karetki w pierwszej linii
+        lcd_cmd(L_L2); //Przejscie do drugiej linii
         lcd_str("Czas:      "); //napis
         lcd_str("0"); //napis
         lcd_str(":");
@@ -230,15 +230,15 @@ void main(void) {
         lcd_str("   ");   
        }  
        
-       if(PORTBbits.RB3 == 0)
+       if(PORTBbits.RB3 == 0) // jesli wcisniemy rb3 
        {
-        delay(100);
-        time+=10;
+        delay(100); // opoznienie ustaw na 100ms
+        time+=10; // do czasu dodaj wartosc 10 sek
 
-        lcd_cmd(L_L1); //Przej??ie do drugiej linii
+        lcd_cmd(L_L1); //Przejscie do pierwszej linii
         lcd_str("Moc:        "); //napis
         lcd_str(Power); //napis
-        lcd_cmd(L_L2); //Ustawienie karetki w pierwszej linii
+        lcd_cmd(L_L2); //Przejscie do drugiej linii
         lcd_str("Czas:      "); //napis
         lcd_str(min); //napis
         lcd_str(":");
@@ -247,16 +247,16 @@ void main(void) {
       
        }
        
-       if(PORTBbits.RB4 == 0)
+       if(PORTBbits.RB4 == 0) //jesli wcisniemy rb4 
        {
-        delay(100);
-        time+=60;
+        delay(100); // opoznienie ustaw 100 ms
+        time+=60; // do czasu dodaj 60 sek
 
         
-        lcd_cmd(L_L1); //Przej??ie do drugiej linii
+        lcd_cmd(L_L1); //Przejscie do pierwszej linii
         lcd_str("Moc:        "); //napis
         lcd_str(Power); //napis
-        lcd_cmd(L_L2); //Ustawienie karetki w pierwszej linii
+        lcd_cmd(L_L2); //Przejscie do drugiej linii
         lcd_str("Czas:      "); //napis
         lcd_str(min); //napis
         lcd_str(":");
@@ -264,9 +264,9 @@ void main(void) {
         lcd_str("   ");
 
        }
-       if(PORTBbits.RB5 == 0)
+       if(PORTBbits.RB5 == 0) // jesli wcisniemy rb5 
        {
-           delay(100);
+           delay(100); // opoznienie ustaw na 100ms
         if(strcmp(Power, "200W") == 0)
         {
         strcpy(Power,"350W");
@@ -285,10 +285,10 @@ void main(void) {
         {
         strcpy(Power,"200W");
         }
-        lcd_cmd(L_L1); //Przej??ie do drugiej linii
+        lcd_cmd(L_L1); //Przejscie do pierwszej linii
         lcd_str("Moc:        "); //napis
         lcd_str(Power); //napis
-        lcd_cmd(L_L2); //Ustawienie karetki w pierwszej linii
+        lcd_cmd(L_L2); //Przejscie do drugiej linii
         lcd_str("Czas:      "); //napis
         lcd_str(min); //napis
         lcd_str(":");
@@ -296,17 +296,17 @@ void main(void) {
         lcd_str("   ");        
        }
 
-        if(start==T){
-            delay(100);
-            if(time!=0)
+        if(start==T){ // jesli zmienna "start" jest rowna zmiennej "T"
+            delay(100);//ustaw opoznienie na 100ms
+            if(time!=0) // jesli zmienna "time" jest rozna od 0
             {
-                time-=1;
+                time-=1; // to zmienna "time" zmniejszamy o 1
             }
             
-         lcd_cmd(L_L1); //Przej??ie do drugiej linii
+         lcd_cmd(L_L1); //Przejscie do pierwszej linii
         lcd_str("Moc:        "); //napis
         lcd_str(Power); //napis
-        lcd_cmd(L_L2); //Ustawienie karetki w pierwszej linii
+        lcd_cmd(L_L2); //Przejscie do drugiej linii
         lcd_str("Czas:      "); //napis
         lcd_str(min); //napis
         lcd_str(":");
