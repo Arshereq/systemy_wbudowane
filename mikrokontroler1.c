@@ -37,72 +37,72 @@ again:
 	PORTA=(unsigned int) display;
 	for(i=500L*SCALE;i>0;i--) Nop();
 
-	if (PORTDbits.RD13 == 0){
-		if(zadanie==9)
+	if (PORTDbits.RD13 == 0){ //Jesli wcisniemy rd13(pojscie o kolejne zadanie do przodu(case))
+		if(zadanie==9) //Jesli zmienna zadaie jest rowna 9 to ustaw zmienna zadanie na 1
 			zadanie=1;
-		else
+		else // jesli zmienna zadanie jest rozna od 9 to ustaw zmienna zadanie na aktualna liczbe +1
 			zadanie=zadanie+1;
 	}
-	else if (PORTDbits.RD6==0)
+	else if (PORTDbits.RD6==0) //Jesli wcisniemy rd6 (cofanie sie w zadaniach(case))
 	{
-		if(zadanie==1)
+		if(zadanie==1) // zmienna "zadanie" jest rowna 1 to ustaw zmienna na "zadanie" na 9 
 			zadanie=9;
-		else
+		else // w innym przypadku zmienna "zadanie" ustaw jako aktualna liczbe - 1; 
 			zadanie=zadanie-1;
 	}
-	switch (zadanie){
+	switch (zadanie){ // zalezne jaka wartosc ma zadanie to niech wykonuje danego case'a
 	
 	case 1:
-		display=display+1;
-		break;
+		display=display+1; // ustawiamy dla zmiennej "display" wartosc powiekszona o zmienna "display" +1 
+		break; // przerywamy dzialanie 
 
 	case 2:
-		display=display-1;
+		display=display-1; // ustawiamy dla zmiennej "display" wartosc pomniejszona o zmienna "display" -1 
 		break;
 
 	case 3:
-		display=x^(x>>1);
-		x++;
+		display=x^(x>>1); // ustawiamy dla zmiennej "display" wartosc x do potegi x przesunietej w prawo o 1 bit
+		x++; // wartosc x zwiekszamy o 1
 		break;
 
 	case 4:
-		display=x^(x>>1);
-		x--;
-		if(x==0)
-			x=255;
-		else
-			x--;
+		display=x^(x>>1); // ustawiamy dla zmiennej "display" wartosc x do potegi x przesunietej w lewo o 1 bit 
+		x--; // wartosc x pomniejsz o 1
+		if(x==0) // jesli x bedzie rowne 0 
+			x=255; // to ustaw x na wartosc 255
+		else // lub
+			x--; // wartosc x pomniejsz o 1 
 		break;
 
 	case 5:
-		licznik++;
-		D=licznik/10;
-		J=licznik%10;
-		display=(D<<4) | J;
+		licznik++; // dodajemy 1 do zmiennej "licznik"
+		D=licznik/10; // zmienna D przyjmuje wartosc licznik(ktory w tym momencie ma wartosc 1) dzielimy przez 10
+		J=licznik%10; // zmienna J przyjmuje wartosc licznik(ktory w tym momencie ma wartosc 1) i robimy dzielenie modulo 10
+		display=(D<<4) | J; // ustawiamy display na wartosc gdzie D przesuwamy o 4 bity w lewo i ????????????????????
 		break;
 
 	case 6:
-		licznik--;
-		D=licznik/10;
-		J=licznik%10;
-		display=(D>>4) | J;	
+		licznik--; // odejmujemy 1 od zmiennej "licznik"
+		D=licznik/10; // zmienna D przyjmuje wartosc licznik(ktory w tym momencie ma wartosc 0) dzielimy przez 10
+		J=licznik%10; // zmienna J przyjmuje wartosc licznik(ktory w tym momencie ma wartosc 0) i robimy dzielenie modulo 10
+		display=(D>>4) | J;	// ustawiamy display na wartosc gdzie D przesuwamy o 4 bity w prawo i ????????????????????
 		break;
 
 	case 7:
-		display=y;
-			if(snake==0)
+		display=y; // display jest rowny 7 
+			if(snake==0) // jesli snake ma wartosc 0
 			{
-				y=y<<1;
+				y=y<<1; // to przejdz po 1 bicie w lewo 
 			}
-			else if(snake==1)
+			else if(snake==1) // jesli snake ma wartosc 1 
 			{
-				y=y>>1;
+				y=y>>1; // to przejdz po 1 bicie w prawo 
 			}
-			if(y==224)
+			if(y==224) //jesli zmienna y bedzie wynosila 224 
 			{
-				snake=1;
-			}else if(y==7){
-				snake=0;
+				snake=1; // to ustaw zmienna "snake" na wartosc 1
+			}else if(y==7){ // jesli zmienna y bedzie wynosila 7 
+				snake=0; // to ustaw zmienna "snake" na wartosc 0
 			}
 		break;
 
@@ -185,10 +185,10 @@ again:
 		break;
 	
 	case 9:
-		srand(time(NULL));
-		int i;
-		i =rand()%116;
-		display=i;
+		srand(time(NULL)); // losujemy pseudolosowe liczby
+		int i; // zmienna i 
+		i =rand()%116; // przypisujemy do zmiennej i losowa liczbe 
+		display=i; // przydzielamy do zmiennej "display" wartosc "i"
 		break;
 	}
 	goto again;
