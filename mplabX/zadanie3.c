@@ -173,29 +173,29 @@ void main(void) {
     TRISD=0x00;
     TRISE=0x00;
     
-    lcd_init(); //Inicjalizacja wy?wietlacza
-    lcd_cmd(L_CLR); //Czyszczenie wy?wietlacza
+    lcd_init(); //Inicjalizacja wyswietlacza
+    lcd_cmd(L_CLR); //Czyszczenie wyswietlacza
     
     while(1)
     {
-       delay(1000);
-       lcd_cmd(L_CLR);
+       delay(1000); // ustawienie opoznienia
+       lcd_cmd(L_CLR); // czyszczenie wyswietlacza
        lcd_cmd(L_L1); //Ustawienie karetki w pierwszej linii
        lcd_str("Reklama!"); //napis
        
        delay(1000);
        lcd_cmd(L_CLR);
-       lcd_cmd(L_L1); //Przej??ie do drugiej linii
+       lcd_cmd(L_L1); 
        lcd_str("TYLKO");
-       lcd_cmd(L_L2);
+       lcd_cmd(L_L2); //Przejscie do drugiej linii
        lcd_str("      U NAS");
        
        delay(1000);
        lcd_cmd(L_CLR);
        lcd_cmd(L_L1);
-       lcd_str("Codzie");
+       lcd_str("Codzie"); // wypisanie w pierwszej linii
        lcd_cmd(L_L2);
-       lcd_str("      nnie");
+       lcd_str("      nnie"); // wypisanie tekstu w drugiej linii
        
        delay(1000);
        lcd_cmd(L_CLR);
