@@ -1,6 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-// CONFIG1H
+//CONFIG1H
 #pragma config OSC = HSPLL      // Oscillator Selection bits (HS oscillator, PLL enabled (Clock Frequency = 4 x FOSC1))
 #pragma config FCMEN = OFF      // Fail-Safe Clock Monitor Enable bit (Fail-Safe Clock Monitor disabled)
 #pragma config IESO = OFF       // Internal/External Oscillator Switchover bit (Oscillator Switchover mode disabled)
@@ -56,6 +54,7 @@
 #pragma config EBTRB = OFF
 
 #include <xc.h>
+#include <stdio.h>
 
 #define LENA  PORTEbits.RE1
 #define LDAT  PORTEbits.RE2
@@ -89,6 +88,8 @@ void delay(unsigned int ms)
    }
  }
 }
+
+
 
 unsigned int adc(unsigned char kanal)
 {
@@ -177,155 +178,200 @@ void main(void) {
     
     lcd_init(); //Inicjalizacja wy?wietlacza
     lcd_cmd(L_CLR); //Czyszczenie wy?wietlacza
-   unsigned int time;
-   unsigned char tim[3]="0";
-   typedef enum { F, T } boolean;
-   unsigned char Power[4];
-   unsigned char sec[2]="0";
-   unsigned char min[3]="0";
-   
-   unsigned char min2[3]="0";
-   unsigned char sec2[2]="0";
-   
-   boolean start=F;
-  // { "800W", "600W" , "350W" , "200W"}
-    strcpy(Power,"200W");
-
-    lcd_cmd(L_L1); //Przej??ie do drugiej linii
-    lcd_str("Gracz1:  Gracz2:"); //napis
-    lcd_str(Power); //napis
-    lcd_cmd(L_L2); //Ustawienie karetki w pierwszej linii
-    lcd_str(min); //napis
-    lcd_str(":");
-    lcd_str(sec); //napis
-    lcd_str("00");
     
-    lcd_str("     ");
+    unsigned int timeLength=0; //Warto?? timeLengthu
     
-    lcd_str(min2);
-    lcd_str(":");
-    lcd_str(sec2);
-    lcd_str("0");
+    int time=0; //Zmienna mowi?ca czy ustawiono czas
+    int minP1=0; //Minuty P1
+    int secP1=0; //Sekundy P1
+    char minStr[50]; //Char przechowuj?cy minuty P1
+    char secStr[50]; //Char przechowuj?cy sekundy P1
+    
+    int minP2=0; //Minuty P2
+    int secP2=0;  //Sekundy P2
+    char minStr1[50]; //Char przechowuj?cy minuty P2
+    char secStr1[50]; //Char przechowuj?cy sekundy P1
+    
+    int btnP1=0; //Zmienna definiuj?ca start/stop P1
+    int btnP2=0; //Zmienna definiuj?ca start/stop P2
 
     while(1)
     {
-        
-       sprintf(min, "%d", time/60);
-       sprintf(sec, "%d", time%60);
-       if(PORTBbits.RB1 == 0)
-       {
-           delay(100);
-           if(start==F)
-           {
-               start=T;
-           }
-           else
-           {
-               start=F;
-           }
-       }
-       
-       if(PORTBbits.RB2 == 0)
-       {
-           time=0;
+        delay(200); //Poczekaj 200ms
 
-        
-        lcd_cmd(L_L1); //Przej??ie do drugiej linii
-        lcd_str("Moc:        "); //napis
-        lcd_str(Power); //napis
-        lcd_cmd(L_L2); //Ustawienie karetki w pierwszej linii
-        lcd_str("Czas:      "); //napis
-        lcd_str("0"); //napis
-        lcd_str(":");
-        lcd_str("00"); //napis
-        lcd_str("   ");   
-       }  
-       
-       if(PORTBbits.RB3 == 0)
-       {
-        delay(100);
-        time+=10;
-
-        lcd_cmd(L_L1); //Przej??ie do drugiej linii
-        lcd_str("Moc:        "); //napis
-        lcd_str(Power); //napis
-        lcd_cmd(L_L2); //Ustawienie karetki w pierwszej linii
-        lcd_str("Czas:      "); //napis
-        lcd_str(min); //napis
-        lcd_str(":");
-        lcd_str(sec); //napis
-        lcd_str("   ");   
-      
-       }
-       
-       if(PORTBbits.RB4 == 0)
-       {
-        delay(100);
-        time+=60;
-
-        
-        lcd_cmd(L_L1); //Przej??ie do drugiej linii
-        lcd_str("Gracz1:  Gracz2:"); //napis
-        lcd_str(Power); //napis
-        lcd_cmd(L_L2); //Ustawienie karetki w pierwszej linii
-        lcd_str("Czas:      "); //napis
-        lcd_str(min); //napis
-        lcd_str(":");
-        lcd_str(sec); //napis
-        lcd_str("   ");
-
-       }
-       if(PORTBbits.RB5 == 0)
-       {
-           delay(100);
-        if(strcmp(Power, "200W") == 0)
+        if(PORTBbits.RB3==0)//Czas gracza P1
         {
-        strcpy(Power,"350W");
-      
-        }
-        else if(strcmp(Power, "350W") == 0)
-        {
-         strcpy(Power,"600W");
-        }
-        else if(strcmp(Power, "600W") == 0)
-        {
-        strcpy(Power,"800W");
-
-        }
-        else
-        {
-        strcpy(Power,"200W");
-        }
-        lcd_cmd(L_L1); //Przej??ie do drugiej linii
-        lcd_str("Moc:        "); //napis
-        lcd_str(Power); //napis
-        lcd_cmd(L_L2); //Ustawienie karetki w pierwszej linii
-        lcd_str("Czas:      "); //napis
-        lcd_str(min); //napis
-        lcd_str(":");
-        lcd_str(sec); //napis 
-        lcd_str("   ");        
-       }
-
-        if(start==T){
-            delay(100);
-            if(time!=0)
+            time=1; //Czas zosta? ustawiony
+            btnP1=0; //Zmienna btnP1 ustawiona na 0
+            while(minP1>=0) //Odliczanie zako?czy si? je?eli liczba minut == 0
             {
-                time-=1;
-            }
-            
-         lcd_cmd(L_L1); //Przej??ie do drugiej linii
-        lcd_str("Moc:        "); //napis
-        lcd_str(Power); //napis
-        lcd_cmd(L_L2); //Ustawienie karetki w pierwszej linii
-        lcd_str("Czas:      "); //napis
-        lcd_str(min); //napis
-        lcd_str(":");
-        lcd_str(sec); //napis
-        lcd_str("   ");
-  
-        }
+                for(int i= secP1;i>=0;i--) //Odliczanie sekund
+                {
+                    delay(500); //Poczekaj pó? sekundy
+                    if(PORTBbits.RB5 == 0) //Je?eli podczas odliczania zostanie btnP1ni?ty RB5
+                    {
+                        btnP1=1; //To zmienna btnP1 = 1
+                        break; //I przerywamy dzia?anie p?tli
+                    }
+                    if(i==0) //Je?eli dojdziemy do "zerowej" sekundy
+                    {
+                        if(minP1!=0) //I liczba minut jest ró?na od 0
+                        {
+                            minP1=minP1-1; //To zmniejszamy minuty o 1
+                            secP1=59; //A sekundy ustawiamy na 59
+                        }    
+                   }
+                   else //W innym przypadku 
+                   {
+                        secP1=secP1-1; //Po prostu zmniejszamy liczb? sekund
+                   } 
+                   delay(500); //Poczekaj pó? sekundy
+                   lcd_cmd(L_CLR); //Wyczy?? ekran
+                   sprintf(minStr,"%d",minP1); //Zamiana liczby minut P1 na typ char
+                   sprintf(secStr,"%d",secP1); //Zamiana liczby sekund P1 na typ char
+                   lcd_cmd(L_L1); //Ustawienie karetki w pierwszej linii
+                   lcd_str("Gracz 1    "); //napis
+                   lcd_str(minStr); //Wy?wietlenie minut P1
+                   lcd_str(":"); //napis
+                   lcd_str(secStr); //Wy?wietlenie sekind P1
 
+                   sprintf(minStr1,"%d",minP2); //Zamiana liczby minut P2 na typ char
+                   sprintf(secStr1,"%d",secP2); //Zamiana liczby sekund P2 na typ char
+
+                   lcd_cmd(L_L2); //Przej?cie do drugiej linii
+                   lcd_str("Gracz 2    "); //napis
+                   lcd_str(minStr1); //Wy?wietlenie minut P2
+                   lcd_str(":"); //napis
+                   lcd_str(secStr1); //Wy?wietlenie sekund P2
+                   
+                }  
+                if(btnP1 == 1) //Je?eli wcze?niej zosta? klini?ty RB5 (btnP1=1)
+                {
+                    break; //Przerwij odliczanie
+                }
+                if(minP1==0&&secP1==0) //Je?eli czas gracza si? sko?czy?
+                {
+                    lcd_cmd(L_CLR); //Wyczy?? ekran
+                    lcd_cmd(L_L1);  //Przej?cie do pierwszej linii
+                    lcd_str("Gracz1 przegral"); //napis
+                    lcd_cmd(L_L2); //Przej?cie do drugiej linii
+                    lcd_str("koniec czasu"); //napis
+                    minP2=0; //Minuty P2 time na 0
+                    secP2=0; //Sekundy P2 time na 0
+                    delay(5000); //Poczekaj pó? sekundy
+                    time=0; //Zmie? zmienn? 'ustwione' na 0
+                    break; //Przerwij
+                }
+            }
+        }
+        if(PORTBbits.RB5==0)//Czas gracza P2
+        {
+            time=1; //Czas zosta? ustawiony
+            btnP2=0; //Zmienna btnP1 ustawiona na 0
+            while(minP2>=0) //Odliczanie zako?czy si? je?eli liczba minut == 0
+            {
+                for(int i= secP2;i>=0;i--) //Odliczanie sekund
+                {
+                    delay(500); //Poczekaj pó? sekundy
+                    if(PORTBbits.RB3 == 0) //Je?eli podczas odliczania zostanie btnP1ni?ty RB3
+                    {
+                        btnP2=1; //To zmienna btnP2 = 1
+                        break; //I przerywamy dzia?anie p?tli
+                    }
+                    if(i==0) //Je?eli dojdziemy do "zerowej" sekundy
+                    {
+                        if(minP2!=0) //I liczba minut jest ró?na od 0
+                        {
+                            minP2=minP2-1; //To zmniejszamy minuty o 1
+                            secP2=59; //A sekundy ustawiamy na 59
+                        }    
+                   }
+                   else //W innym przypadku 
+                   {
+                        secP2=secP2-1; //Po prostu zmniejszamy liczb? sekund
+                   } 
+                   delay(500); //Poczekaj pó? sekundy
+                   lcd_cmd(L_CLR); //Wyczy?? ekran
+                   sprintf(minStr,"%d",minP1); //Zamiana liczby minut P1 na typ char
+                   sprintf(secStr,"%d",secP1); //Zamiana liczby sekund P1 na typ char
+                   lcd_cmd(L_L1); //Ustawienie karetki w pierwszej linii
+                   lcd_str("Gracz 1    "); //napis
+                   lcd_str(minStr); //Wy?wietlenie minut P1
+                   lcd_str(":"); //napis
+                   lcd_str(secStr); //Wy?wietlenie sekind P1
+
+                   sprintf(minStr1,"%d",minP2); //Zamiana liczby minut P2 na typ char
+                   sprintf(secStr1,"%d",secP2); //Zamiana liczby sekund P2 na typ char
+
+                   lcd_cmd(L_L2); //Przej?cie do drugiej linii
+                   lcd_str("Gracz 2    "); //napis
+                   lcd_str(minStr1); //Wy?wietlenie minut P2
+                   lcd_str(":"); //napis
+                   lcd_str(secStr1); //Wy?wietlenie sekund P2
+                   
+                }  
+                if(btnP2 == 1) //Je?eli wcze?niej zosta? klini?ty RB5 (btnP1=1)
+                {
+                    break; //Przerwij odliczanie
+                }
+                if(minP2==0&&secP2==0) //Je?eli czas gracza si? sko?czy?
+                {
+                    lcd_cmd(L_CLR); //Wyczy?? ekran
+                    lcd_cmd(L_L1);  //Przej?cie do pierwszej linii
+                    lcd_str("Gracz2 przegral"); //napis
+                    lcd_cmd(L_L2); //Przej?cie do drugiej linii
+                    lcd_str("koniec czasu"); //napis
+                    minP1=0; //Minuty P1 time na 0
+                    secP1=0; //Sekundy P1 time na 0
+                    delay(5000); //Poczekaj pó? sekundy
+                    time=0; //Zmie? zmienn? 'ustwione' na 0
+                    break; //Przerwij
+                }
+            }
+        }
+        
+        if(time==0)
+        {
+        timeLength=((unsigned int)adc(1) / 10); //Warto?? timeLengthu P2
+        
+        if(timeLength>=0 && timeLength<=(100/3)*1) //Je?eli mie?ci si? w 1/3 zakresu
+        {
+			//To ustaw czas na 1 minP1:
+            minP1=1;
+            minP2=1; 
+        }
+        if(timeLength>(100/3)*1 && timeLength<=(100/3)*2) //Je?eli mie?ci si? w 2/3 zakresu
+        {
+			//To ustaw czas na 3 minP1:
+            minP1=3;
+            minP2=3; 
+        }
+        if(timeLength>(100/3)*2 && timeLength<=(100/3)*3) //Je?eli mie?ci si? w 3/3 zakresu
+        {
+			//To ustaw czas na 5 minP1:
+            minP1=5;
+            minP2=5; 
+        }
+        }
+        lcd_cmd(L_CLR); //Wyczyszczenie ekranu
+        
+        sprintf(minStr,"%d",minP1); //Zamiana liczby minut P1 na typ char
+        sprintf(secStr,"%d",secP1); //Zamiana liczby sekund P1 na typ char
+        
+        lcd_cmd(L_L1); //Ustawienie karetki w pierwszej linii
+        lcd_str("Gracz 1    "); //napis
+        lcd_str(minStr); //Wy?wietlanie minut P1
+        lcd_str(":"); //napis
+        lcd_str(secStr); //Wy?wietlanie sekund P1
+        
+        sprintf(minStr1,"%d",minP2); //Zamiana liczby minut P2 na typ char
+        sprintf(secStr1,"%d",secP2); //Zamiana liczby sekund P2 na typ char
+        
+        lcd_cmd(L_L2); //Przej?cie do drugiej linii
+        lcd_str("Gracz 2    "); //napis
+        lcd_str(minStr1); //Wy?wietlanie minut P2
+        lcd_str(":"); //napis
+        lcd_str(secStr1); //Wy?wietlanie sekund P2
     }
     
     return;
